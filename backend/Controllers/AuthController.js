@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserModel = require("../Models/User");
 
-
 const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -20,14 +19,14 @@ const signup = async (req, res) => {
                 success: true
             })
     } catch (err) {
+        console.error("Signup error:", err); // Added error logging
         res.status(500)
             .json({
-                message: "Internal server errror",
+                message: "Internal server error",
                 success: false
             })
     }
 }
-
 
 const login = async (req, res) => {
     try {
@@ -58,9 +57,10 @@ const login = async (req, res) => {
                 name: user.name
             })
     } catch (err) {
+        console.error("Login error:", err); // Added error logging
         res.status(500)
             .json({
-                message: "Internal server errror",
+                message: "Internal server error",
                 success: false
             })
     }

@@ -1,3 +1,6 @@
+require('dotenv').config();
+require('./Models/db');
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -7,11 +10,9 @@ const ProductRouter = require('./Routes/ProductRouter');
 const ExpenseRouter = require('./Routes/ExpenseRouter');
 const ensureAuthenticated = require('./Middlewares/Auth');
 
-require('dotenv').config();
-require('./Models/db');
 const PORT = process.env.PORT || 4000;
 
-// clean CORS ONLY FOR THIS APP
+// CORS configuration - Fixed to allow frontend
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
