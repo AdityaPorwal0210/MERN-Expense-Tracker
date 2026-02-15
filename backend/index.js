@@ -9,19 +9,24 @@ const ensureAuthenticated = require('./Middlewares/Auth');
 
 require('dotenv').config();
 require('./Models/db');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 6000;
 
-app.get('/ping', (req, res) => {
-    res.send('PONG');
-});
+// clean CORS ONLY FOR THIS APP
+app.use(cors({
+  origin: 'http://localhost:6000',
+  credentials: true,
+}));
 
 app.use(bodyParser.json());
-app.use(cors());
+
+app.get('/ping', (req, res) => {
+  res.send('PONG');
+});
+
 app.use('/auth', AuthRouter);
 app.use('/products', ProductRouter);
-app.use('/expenses', ensureAuthenticated, ExpenseRouter)
-
+app.use('/expenses', ensureAuthenticated, ExpenseRouter);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`)
-})
+  console.log(`Server is running on ${PORT}`);
+});
