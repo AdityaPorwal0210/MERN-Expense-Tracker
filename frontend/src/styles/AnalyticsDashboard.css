@@ -1,0 +1,140 @@
+.analytics-dashboard {
+    padding: 20px;
+}
+
+.analytics-dashboard h2 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.loading,
+.no-data {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+    font-size: 18px;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.summary-card.income {
+    border-left: 4px solid #4caf50;
+}
+
+.summary-card.expense {
+    border-left: 4px solid #f44336;
+}
+
+.summary-card.balance.positive {
+    border-left: 4px solid #4caf50;
+}
+
+.summary-card.balance.negative {
+    border-left: 4px solid #ff9800;
+}
+
+.card-icon {
+    font-size: 40px;
+}
+
+.card-content h3 {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.card-content .amount {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-container.full-width {
+    grid-column: 1 / -1;
+}
+
+.chart-container h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.no-chart-data {
+    text-align: center;
+    color: #999;
+    padding: 50px 0;
+}
+
+.category-table {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.category-table h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.category-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.category-table th {
+    text-align: left;
+    padding: 12px;
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #ddd;
+}
+
+.category-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.category-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.category-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}

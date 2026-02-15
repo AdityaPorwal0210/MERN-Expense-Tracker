@@ -1,0 +1,151 @@
+.transaction-list-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.transactions-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.transactions-header {
+    margin-bottom: 20px;
+}
+
+.transactions-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.loading,
+.no-transactions {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+}
+
+.no-transactions .hint {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.transaction-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.transaction-item.income {
+    border-left-color: #4caf50;
+}
+
+.transaction-item.expense {
+    border-left-color: #f44336;
+}
+
+.transaction-icon {
+    font-size: 30px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+}
+
+.transaction-details {
+    flex: 1;
+}
+
+.transaction-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.description {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.category-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.transaction-date {
+    color: #999;
+    font-size: 13px;
+}
+
+.transaction-amount {
+    font-size: 20px;
+    font-weight: 700;
+    min-width: 120px;
+    text-align: right;
+}
+
+.transaction-amount .income {
+    color: #4caf50;
+}
+
+.transaction-amount .expense {
+    color: #f44336;
+}
+
+.transaction-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.edit-btn:hover {
+    background: #e3f2fd;
+}
+
+.delete-btn:hover {
+    background: #ffebee;
+}
+
+@media (max-width: 768px) {
+    .transaction-list-container {
+        grid-template-columns: 1fr;
+    }
+}
