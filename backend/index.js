@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 
 // clean CORS ONLY FOR THIS APP
 app.use(cors({
-  origin: 'http://localhost:4000',
+  origin: 'http://localhost:3000',
   credentials: true,
 }));
 
