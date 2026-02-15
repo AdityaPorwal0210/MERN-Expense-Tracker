@@ -30,10 +30,11 @@ app.get('/ping', (req, res) => {
   res.send('PONG');
 });
 
-app.use('/auth', AuthRouter);
-app.use('/products', ProductRouter);
-app.use('/expenses', ensureAuthenticated, ExpenseRouter);
-app.use('/budgets', ensureAuthenticated, BudgetRouter);
+app.use('/api/auth', AuthRouter);
+app.use('/api/products', ProductRouter);
+app.use('/api/expenses', ensureAuthenticated, ExpenseRouter);
+app.use('/api/budgets', ensureAuthenticated, BudgetRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
