@@ -36,6 +36,7 @@ app.use('/api/expenses', ensureAuthenticated, ExpenseRouter);
 app.use('/api/budgets', ensureAuthenticated, BudgetRouter);
 
 
+
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
