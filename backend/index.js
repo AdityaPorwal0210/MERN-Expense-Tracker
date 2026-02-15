@@ -9,11 +9,11 @@ const ensureAuthenticated = require('./Middlewares/Auth');
 
 require('dotenv').config();
 require('./Models/db');
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 4000;
 
 // clean CORS ONLY FOR THIS APP
 app.use(cors({
-  origin: 'http://localhost:6000',
+  origin: 'http://localhost:4000',
   credentials: true,
 }));
 
