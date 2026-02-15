@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TransactionForm from '../components/TransactionForm';
 import TransactionList from '../components/TransactionList';
@@ -11,6 +11,11 @@ const Dashboard = () => {
     const [editTransaction, setEditTransaction] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const navigate = useNavigate();
+
+    // SCROLL TO TOP ON MOUNT
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');

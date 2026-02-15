@@ -1,8 +1,14 @@
 .transaction-list-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 20px;
+    display: block;
+    padding: 0;
+}
+
+.filter-panel {
+    background: #fff;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
 .transactions-section {
@@ -83,6 +89,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 5px;
+    flex-wrap: wrap;
 }
 
 .description {
@@ -145,7 +152,13 @@
 }
 
 @media (max-width: 768px) {
-    .transaction-list-container {
-        grid-template-columns: 1fr;
+    .transaction-item {
+        flex-wrap: wrap;
+    }
+    
+    .transaction-amount {
+        width: 100%;
+        text-align: left;
+        margin-top: 10px;
     }
 }

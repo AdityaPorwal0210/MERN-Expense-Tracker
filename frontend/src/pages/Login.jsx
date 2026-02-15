@@ -4,14 +4,12 @@ import { ToastContainer } from 'react-toastify';
 import { APIUrl, handleError, handleSuccess } from '../utils';
 import '../login.css';
 
-// Optional icons
 const FaSun = () => <span>☀️</span>;
 const FaMoon = () => <span>🌙</span>;
-const FaUserPlus = () => <span>➕</span>;
+const FaSignInAlt = () => <span>🔑</span>;
 
-function Signup() {
-    const [signupInfo, setSignupInfo] = useState({
-        name: '',
+function Login() {
+    const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
     });
@@ -36,36 +34,41 @@ function Signup() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSignupInfo(prev => ({ ...prev, [name]: value }));
+        setLoginInfo(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSignup = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        const { name, email, password } = signupInfo;
-
-        if (!name || !email || !password) {
+        const { email, password } = loginInfo;
+        if (!email || !password) {
             triggerShake();
-            return handleError('Name, email, and password are required');
+            return handleError('Email and password are required');
         }
-
         try {
-            const url = `${APIUrl}/auth/signup`;
+            const url = `${APIUrl}/auth/login`;
             const response = await fetch(url, {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(signupInfo)
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginInfo)
             });
-
             const result = await response.json();
-            const { success, message, error } = result;
-
+            const { success, message, jwtToken, name, error } = result;
             if (success) {
-                handleSuccess(message || 'Signup successful');
-                setTimeout(() => navigate('/login'), 1000);
-            } else {
+                handleSuccess(message);
+                localStorage.setItem('token', jwtToken);
+                localStorage.setItem('loggedInUser', name);
+                setTimeout(() => {
+                    navigate('/dashboard')
+                }, 1000)
+            } else if (error) {
+                const details = error?.details[0].message;
                 triggerShake();
-                const details = error?.details?.[0]?.message || message || 'Signup failed';
                 handleError(details);
+            } else if (!success) {
+                triggerShake();
+                handleError(message);
             }
         } catch (err) {
             triggerShake();
@@ -74,7 +77,7 @@ function Signup() {
     };
 
     return (
-        <div className={`login-page ${darkMode ? 'dark-theme' : 'light-theme'}`}>
+        <div className={`auth-page ${darkMode ? 'dark-theme' : 'light-theme'}`}>
             <div className="login-background"></div>
 
             <button
@@ -87,30 +90,16 @@ function Signup() {
 
             <div className={`login-container ${shake ? 'shake-animation' : ''}`}>
                 <div className="login-header">
-                    <h1>Create Account</h1>
-                    <p>Sign up to get started</p>
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue</p>
                 </div>
 
-                <form onSubmit={handleSignup} className="login-form">
-                    <div className="form-group">
-                        <label htmlFor="name">Name</label>
-                        <input
-                            onChange={handleChange}
-                            value={signupInfo.name}
-                            type="text"
-                            name="name"
-                            id="name"
-                            className="form-input"
-                            placeholder="Enter your name"
-                            autoComplete="name"
-                        />
-                    </div>
-
+                <form onSubmit={handleLogin} className="login-form">
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <input
                             onChange={handleChange}
-                            value={signupInfo.email}
+                            value={loginInfo.email}
                             type="email"
                             name="email"
                             id="email"
@@ -124,24 +113,24 @@ function Signup() {
                         <label htmlFor="password">Password</label>
                         <input
                             onChange={handleChange}
-                            value={signupInfo.password}
+                            value={loginInfo.password}
                             type="password"
                             name="password"
                             id="password"
                             className="form-input"
                             placeholder="Enter your password"
-                            autoComplete="new-password"
+                            autoComplete="current-password"
                         />
                     </div>
 
                     <button type="submit" className="login-button">
-                        <FaUserPlus className="login-icon" />
-                        <span>Signup</span>
+                        <FaSignInAlt className="login-icon" />
+                        <span>Login</span>
                     </button>
                 </form>
 
                 <div className="signup-link">
-                    Already have an account? <Link to="/login">Login</Link>
+                    Don't have an account? <Link to="/signup">Signup</Link>
                 </div>
             </div>
 
@@ -150,4 +139,4 @@ function Signup() {
     );
 }
 
-export default Signup;
+export default Login;

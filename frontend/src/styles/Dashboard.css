@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .dashboard {
     min-height: 100vh;
     background: #f5f5f5;
@@ -68,6 +74,7 @@
     font-weight: 600;
     color: #666;
     transition: all 0.2s;
+    font-size: 16px;
 }
 
 .dashboard-nav button:hover {
@@ -82,7 +89,7 @@
 .dashboard-main {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px 20px;
 }
 
 @media (max-width: 768px) {
