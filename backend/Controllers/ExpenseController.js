@@ -1,75 +1,239 @@
-const UserModel = require("../Models/User");
+const Expense = require('../Models/Expense');
 
-const addTransaction = async (req, res) => {
-    const { _id } = req.user;
-    console.log(_id, req.body)
+// Get all expenses with advanced filtering
+const getExpenses = async (req, res) => {
     try {
-        const userData = await UserModel.findByIdAndUpdate(
-            _id,
-            { $push: { expenses: req.body } },
-            { new: true } // For Returning the updated documents
-        )
-        res.status(200)
-            .json({
-                message: "Expense added successfully",
-                success: true,
-                data: userData?.expenses
-            })
-    } catch (err) {
-        return res.status(500).json({
-            message: "Something went wrong",
-            error: err,
-            success: false
-        })
-    }
-}
+        const userId = req.user._id;
+        const { 
+            category, 
+            type, 
+            startDate, 
+            endDate, 
+            minAmount, 
+            maxAmount, 
+            search,
+            sortBy = 'date',
+            sortOrder = 'desc'
+        } = req.query;
 
-const getAllTransactions = async (req, res) => {
-    const { _id } = req.user;
-    console.log(_id, req.body)
+        let filter = { userId };
+
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+
+        if (type && type !== 'all') {
+            filter.type = type;
+        }
+
+        if (startDate || endDate) {
+            filter.date = {};
+            if (startDate) {
+                filter.date.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                filter.date.$lte = new Date(endDate);
+            }
+        }
+
+        if (minAmount || maxAmount) {
+            filter.amount = {};
+            if (minAmount) {
+                filter.amount.$gte = parseFloat(minAmount);
+            }
+            if (maxAmount) {
+                filter.amount.$lte = parseFloat(maxAmount);
+            }
+        }
+
+        if (search) {
+            filter.description = { $regex: search, $options: 'i' };
+        }
+
+        const sortOptions = {};
+        sortOptions[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+        const expenses = await Expense.find(filter).sort(sortOptions);
+
+        res.status(200).json({
+            success: true,
+            data: expenses
+        });
+    } catch (err) {
+        console.error("Get expenses error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch expenses"
+        });
+    }
+};
+
+// Get expense statistics
+const getExpenseStats = async (req, res) => {
     try {
-        const userData = await UserModel.findById(_id).select('expenses');
-        res.status(200)
-            .json({
-                message: "Fetched Expenses successfully",
-                success: true,
-                data: userData?.expenses
-            })
-    } catch (err) {
-        return res.status(500).json({
-            message: "Something went wrong",
-            error: err,
-            success: false
-        })
-    }
-}
+        const userId = req.user._id;
 
-const deleteTransaction = async (req, res) => {
-    const { _id } = req.user;
-    const expenseId = req.params.expenseId;
+        const stats = await Expense.aggregate([
+            { $match: { userId: userId } },
+            {
+                $group: {
+                    _id: '$type',
+                    total: { $sum: '$amount' },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const categoryStats = await Expense.aggregate([
+            { $match: { userId: userId, type: 'expense' } },
+            {
+                $group: {
+                    _id: '$category',
+                    total: { $sum: '$amount' },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { total: -1 } }
+        ]);
+
+        const monthlyTrend = await Expense.aggregate([
+            { $match: { userId: userId } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$date' },
+                        month: { $month: '$date' },
+                        type: '$type'
+                    },
+                    total: { $sum: '$amount' }
+                }
+            },
+            { $sort: { '_id.year': -1, '_id.month': -1 } },
+            { $limit: 12 }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                summary: stats,
+                byCategory: categoryStats,
+                monthlyTrend: monthlyTrend
+            }
+        });
+    } catch (err) {
+        console.error("Get stats error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch statistics"
+        });
+    }
+};
+
+// Add expense
+const addExpense = async (req, res) => {
     try {
-        const userData = await UserModel.findByIdAndUpdate(
-            _id,
-            { $pull: { expenses: { _id: expenseId } } },
-            { new: true } // For Returning the updated documents
-        )
-        res.status(200)
-            .json({
-                message: "Expense Deleted successfully",
-                success: true,
-                data: userData?.expenses
-            })
-    } catch (err) {
-        return res.status(500).json({
-            message: "Something went wrong",
-            error: err,
-            success: false
-        })
-    }
-}
+        const { amount, description, category, type, date } = req.body;
+        const userId = req.user._id;
 
+        if (!amount || !description || !category || !type) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
+        }
+
+        const expense = new Expense({
+            userId,
+            amount,
+            description,
+            category,
+            type,
+            date: date || new Date()
+        });
+
+        await expense.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Transaction added successfully",
+            data: expense
+        });
+    } catch (err) {
+        console.error("Add expense error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to add transaction"
+        });
+    }
+};
+
+// Update expense
+const updateExpense = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+        const updates = req.body;
+
+        const expense = await Expense.findOneAndUpdate(
+            { _id: id, userId },
+            updates,
+            { new: true }
+        );
+
+        if (!expense) {
+            return res.status(404).json({
+                success: false,
+                message: "Transaction not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Transaction updated successfully",
+            data: expense
+        });
+    } catch (err) {
+        console.error("Update expense error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update transaction"
+        });
+    }
+};
+
+// Delete expense
+const deleteExpense = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const expense = await Expense.findOneAndDelete({ _id: id, userId });
+
+        if (!expense) {
+            return res.status(404).json({
+                success: false,
+                message: "Transaction not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Transaction deleted successfully"
+        });
+    } catch (err) {
+        console.error("Delete expense error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete transaction"
+        });
+    }
+};
+
+// Export all functions
 module.exports = {
-    addTransaction,
-    getAllTransactions,
-    deleteTransaction
-}
+    getExpenses,
+    getExpenseStats,
+    addExpense,
+    updateExpense,
+    deleteExpense
+};
