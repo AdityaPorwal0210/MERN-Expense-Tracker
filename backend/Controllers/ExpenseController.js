@@ -69,65 +69,111 @@ const getExpenses = async (req, res) => {
 };
 
 // Get expense statistics
+// Get expense statistics
 const getExpenseStats = async (req, res) => {
-    try {
-        const userId = req.user._id;
-
-        const stats = await Expense.aggregate([
-            { $match: { userId: userId } },
-            {
-                $group: {
-                    _id: '$type',
-                    total: { $sum: '$amount' },
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const categoryStats = await Expense.aggregate([
-            { $match: { userId: userId, type: 'expense' } },
-            {
-                $group: {
-                    _id: '$category',
-                    total: { $sum: '$amount' },
-                    count: { $sum: 1 }
-                }
-            },
-            { $sort: { total: -1 } }
-        ]);
-
-        const monthlyTrend = await Expense.aggregate([
-            { $match: { userId: userId } },
-            {
-                $group: {
-                    _id: {
-                        year: { $year: '$date' },
-                        month: { $month: '$date' },
-                        type: '$type'
-                    },
-                    total: { $sum: '$amount' }
-                }
-            },
-            { $sort: { '_id.year': -1, '_id.month': -1 } },
-            { $limit: 12 }
-        ]);
-
-        res.status(200).json({
-            success: true,
-            data: {
-                summary: stats,
-                byCategory: categoryStats,
-                monthlyTrend: monthlyTrend
-            }
-        });
-    } catch (err) {
-        console.error("Get stats error:", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch statistics"
-        });
+  try {
+    const mongoose = require('mongoose');
+    let userId = req.user._id;
+    
+    // Ensure userId is ObjectId
+    if (typeof userId === 'string') {
+      userId = new mongoose.Types.ObjectId(userId);
     }
+    
+    console.log('=== STATS DEBUG ===');
+    console.log('User ID:', userId);
+    console.log('User ID Type:', typeof userId);
+
+    // First verify user has transactions
+    const allExpenses = await Expense.find({ userId: userId });
+    console.log('Total transactions found:', allExpenses.length);
+    
+    if (allExpenses.length > 0) {
+      console.log('Sample transaction:', allExpenses[0]);
+    }
+
+    // Get summary stats (income vs expense)
+    const stats = await Expense.aggregate([
+      { 
+        $match: { 
+          userId: userId
+        } 
+      },
+      {
+        $group: {
+          _id: '$type',
+          total: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    console.log('Summary stats result:', stats);
+
+    // Get category breakdown (expenses only)
+    const categoryStats = await Expense.aggregate([
+      { 
+        $match: { 
+          userId: userId,
+          type: 'expense'
+        } 
+      },
+      {
+        $group: {
+          _id: '$category',
+          total: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { total: -1 } }
+    ]);
+
+    console.log('Category stats result:', categoryStats);
+
+    // Get monthly trend
+    const monthlyTrend = await Expense.aggregate([
+      { 
+        $match: { 
+          userId: userId
+        } 
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            type: '$type'
+          },
+          total: { $sum: '$amount' }
+        }
+      },
+      { $sort: { '_id.year': -1, '_id.month': -1 } },
+      { $limit: 12 }
+    ]);
+
+    console.log('Monthly trend result:', monthlyTrend);
+    console.log('===================');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        summary: stats,
+        byCategory: categoryStats,
+        monthlyTrend: monthlyTrend
+      }
+    });
+  } catch (err) {
+    console.error("Get stats error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch statistics",
+      error: err.message
+    });
+  }
 };
+
+
+
 
 // Add expense
 const addExpense = async (req, res) => {
