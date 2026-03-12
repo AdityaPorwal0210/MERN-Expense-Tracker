@@ -97,7 +97,16 @@ Signup Page
 
 Core Features
 Expense 
-<img width="1914" height="929" alt="image" src="https://github.com/user-attachments/assets/9a09ff4b-738b-4bf1-b9eb-7a4d721b57eb" />
+<img width="1898" height="904" alt="Screenshot 2026-02-15 190252" src="https://github.com/user-attachments/assets/21510075-4500-4abc-9f90-61a5f4758fa6" />
+
+<img width="1897" height="895" alt="Screenshot 2026-02-15 190311" src="https://github.com/user-attachments/assets/af9ab7cd-b823-4aef-9ece-b53c233dd948" />
+
+<img width="1891" height="916" alt="Screenshot 2026-02-15 190323" src="https://github.com/user-attachments/assets/7dcfc596-7971-44fa-8911-e5834b9be16b" />
+<img width="1621" height="891" alt="Screenshot 2026-02-15 191333" src="https://github.com/user-attachments/assets/3c7a4241-de6f-4cea-a93c-c0670f9ae7e6" />
+<img width="1881" height="910" alt="Screenshot 2026-02-17 223503" src="https://github.com/user-attachments/assets/03449ea5-2445-4874-9e69-1df10536e555" />
+<img width="1889" height="912" alt="Screenshot 2026-02-17 223520" src="https://github.com/user-attachments/assets/92ab8ff3-d95a-4656-9360-ef3ded37d8d0" />
+<img width="1885" height="912" alt="Screenshot 2026-02-17 223554" src="https://github.com/user-attachments/assets/0d46b60a-9300-4100-9a43-9ba9ff185544" />
+
 
 Financial Analytic
 <img width="1914" height="929" alt="image" src="https://github.com/user-attachments/assets/48fd169b-2884-46e8-b993-0411a513135c" />
